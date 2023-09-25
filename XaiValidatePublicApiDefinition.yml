@@ -3071,10 +3071,12 @@ components:
                 type: object
                 description: Object containing the Application and Applicant Serviceability results.
                 required:
+                - TotalGrossIncome
                 - NetMonthlySurplus
                 - LoanToIncomeRatio
                 - MonthlyRepaymentIncomeRatio
                 - DebtToIncomeRatio
+                - DebtServicingRatio
                 - TotalDebtRepayment
                 - AllHouseholdsHemExpenses
                 - AllHouseholdsMonthlyExpenses
@@ -3089,6 +3091,11 @@ components:
                 - HecsTotalMonthlyRepayment
                 - ApplicantServiceability
                 properties:
+                  TotalGrossIncome:
+                    type: number
+                    format: double
+                    description: Represents the total gross income for all applicants included in serviceability calculations. 
+                    example: 155234.56
                   NetMonthlySurplus:
                     type: number
                     format: double
@@ -3104,6 +3111,11 @@ components:
                     format: double
                     description: Represents the monthly repayments to income ratio at application level.
                     example: 1.5577
+                  DebtServicingRatio:
+                    type: number
+                    format: double
+                    description: Represents household's total debt repayments divided by total monthly gross income.
+                    example: 4.123
                   DebtToIncomeRatio:
                     type: number
                     format: double
@@ -3199,6 +3211,7 @@ components:
         required:
         - EmailAddress
         - TaxableGrossIncome
+        - GrossIncome
         - AttributableGrossIncome
         - NetIncomeExcludingAddbacks
         - NetIncomeExcludingAddbacksMonthly
@@ -3219,6 +3232,11 @@ components:
             type: number
             format: double
             example: 110555.66
+          GrossIncome:
+            description: Represents the applicant specific gross annual income before any haircuts.
+            type: number
+            format: double
+            example: 129555.66
           AttributableGrossIncome:
             description: Represents the applicant specific gross annual income.
             type: number
