@@ -490,6 +490,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
+
   /enrichment/categorise:
     post:
       tags:
@@ -600,6 +601,54 @@ paths:
                 $ref: '#/components/schemas/ResponseRequestError'
         422:
           description: Unable to create application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRequestError'
+      x-codegen-request-body-name: RequestBody
+  /income/getlist:
+    post:
+      tags:
+      - Results
+      summary: Retrieve all income data for an application.
+      description:  >-
+
+        This endpoint will return stated, actual and validated income data for the specified application. The application is specifed by the Application Reference Number (ARN).           
+          
+        Results will include:     
+          - a breakdown of each `IncomeType` for the application and applicants
+          - summary per `IncomeType` by the `ValidationType` present, specifically stated, actual and validated 
+          - summary of key metrics (amount, tax treatment etc.), the `DataOrigin` of the income (i.e. user, Open Banking etc.) and the `IncomeSource` (e.g. employer name).
+         
+      operationId: incomegetlist
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: The JSON request body for the POST.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncomeGetListRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseIncomeGetList'
+        401:
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRequestError'
+        422:
+          description: Unable to retrieve income data.
           content:
             application/json:
               schema:
@@ -5173,6 +5222,126 @@ components:
                   description: Indicates which data was used to calculate the potential max borrowing amount, could be either STATED, ACTUAL or VALIDATED
                   example: "VALIDATED"   
             example: [{"PotentialMaxBorrowingAmount": 832600.86, "DebtToIncomeRatio": 0.86, "ValidationType": "VALIDATED"}, {"PotentialMaxBorrowingAmount": 922600.23, "DebtToIncomeRatio": 0.86, "ValidationType": "STATED"}]            
+    IncomeGetListRequest:
+      type: object
+      properties:
+        Arn:
+          type: string
+          example: ABC123        
+      required:
+        - Arn
+    IncomeDataOrigin:
+      type: string
+      enum:
+        - MANUAL
+        - DIGITAL
+        - OCR
+    IncomeFrequency:
+      type: string
+      enum:
+        - O
+        - I
+        - D
+        - W
+        - F
+        - M
+        - Q
+        - A
+    IncomeDetail:
+      type: object
+      properties:
+        Id:
+          type: integer
+          example: 949477
+        DataOrigin:
+          type: string
+          $ref: '#/components/schemas/IncomeDataOrigin'
+        IncomeSource:
+          type: string
+          example: Salary from employer
+        Amount:
+          type: number
+          example: 2.0000
+        Frequency:
+          type: string
+          $ref: '#/components/schemas/IncomeFrequency'
+        IsAmountNet:
+          type: boolean
+          example: false
+        NetAnnualAmount:
+          type: number
+          example: 2.0000
+        NetMonthlyAmount:
+          type: number
+          example: 0.1667
+        GrossAnnualAmount:
+          type: number
+          example: 2.0000        
+      required:
+        - Id
+        - DataOrigin
+        - Amount
+        - Frequency
+        - IsAmountNet
+        - NetAnnualAmount
+        - NetMonthlyAmount
+        - GrossAnnualAmount
+    IncomeType:
+      type: string
+      enum:
+        - BN
+        - DIV
+        - GOV
+        - INT
+        - LFY
+        - RENT
+        - SAL
+        - SUPER
+        - OVR
+        - CS 
+        - GIF
+        - MIF      
+        - OTHER
+        - PL
+        - ROY
+        - TAX
+        - TST
+        - II
+        - ABI
+        - DEP
+        - MV
+        - NP
+        - NP
+        - OIADB
+        - SEOADB
+        - CAR
+    Income:
+      type: object    
+      properties:
+        Id:
+          type: integer
+          example: 949477
+        IncomeType:
+          $ref: '#/components/schemas/IncomeType'
+        ContactId:
+          type: integer
+          example: 225025
+        StatedDetail:
+          $ref: '#/components/schemas/IncomeDetail'
+        ActualDetail:
+          $ref: '#/components/schemas/IncomeDetail'
+        ValidatedDetail:
+          $ref: '#/components/schemas/IncomeDetail'
+      required:
+        - Id
+        - IncomeType
+        - ApplicationContactId              
+    ResponseIncomeGetList:
+      type: array
+      items: 
+        type: object
+        $ref: '#/components/schemas/Income'         
+              
   securitySchemes:
     tokenAuth:
       type: http
