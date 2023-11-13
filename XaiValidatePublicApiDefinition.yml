@@ -1,61 +1,56 @@
 openapi: 3.0.1
 info:
-  title: XAI Validate API
+  title: Xapii by Tiimely API
   x-logo:
-    url: "https://tictoc.ai/img/XAI_rgb.svg"
-    backgroundColor: "#FFFFFF"
-    altText: "XAI logo"
+    url: "https://content.tiimely.app/media/Tiimely/logos/core/Tiimely%20green@4x-100.jpg"
+    backgroundColor: "#000404"
+    altText: "Xapii by Tiimely logo"
   description:   >-
-    ## Welcome to XAI Validate  
+    ## Welcome to Xapii by Tiimely
     
-    XAI Validate is powered by [Tic:Toc](https://tictoc.ai), a technology solutions company providing innovative products to make financial services processes faster, smarter and simpler.
-    
-    
-    XAI Validate solves for digital financial data validation using Explainable Artificial Intelligence (XAI) models to distil and render the customers’ financial data into an application decision summary. It is powered by a set of sophisticated normalisation, categorisation and assessment models, supported by an intuitive user interface that allows assessors to interact with and understand your customers' financial data. This will dramatically reduce the time required for assessment and to increase conversion, while ensuring process assurance and credit quality. We prove all technology against our direct to consumer home loans business, [Tic:Toc Home Loans](https://tictoc.com.au/).
+    Use our Xapii API documentation to begin your **pursuit of seamless**. At Tiimely, we provide some of Australia's most prominent lenders and brands with highly configurable solutions that businesses can use throughout their lending offerings. 
+
+    Market leaders in home lending, consumer lending, credit cards, auto finance, and hardship utilise Xapii APIs to complement, not replace, their existing tech stack to optimise customer outcomes, create engaging journeys, and meet compliance obligations. 
      
-    If you're a lender you can use XAI Validate in two ways:
-      - **Detect and Position** (Actuals only): instantly identify income, expenses, assets and liabilities, behavioural and risk insights.
-      - **Verify and Decision** (Stated vs Actuals): ingest and verify customers’ declared financials against the actual financial position identified in the data. This also allows you to configure your credit policy automating responsible lending assessment decisions.      
-      
-    XAI Validate supports a range of data sources including:
-      - popular data aggregators
-      - connect your own data
-      - Consumer Data Right support (coming soon!)
-          
-    ## Getting Started  
+    With Xapii APIs, you can:
+      - Convert - reduce time and cost to 'yes' with tools that improve conversion
+      - Decide - Automated real-time lending decisioning configured to your product and policy requirements
+      - Fulfil - create a faster, more compliant path to loan completion
+      - Inform - leverage Tiimely's data capabilities and insights to mitigate risks and identify business growth opportunities
+
+    Ready to start your pursuit of seamless?
+
+    [Contact us](mailto:contact@tiimley.com) to discuss which product is right for you and to gain access to our sandbox.
+     
+    ### Xapii by Tiimely supports a range of data sources, including:
+      - Popular data aggregators (illion or Yodlee)
+      - Connect your own data
+      - Consumer Data Right (CDR)
+      - Comprehensive Credit Report (CCR) data - coming soon!
+      - Digitised documents (OCR) - coming soon!
     
-    The XAI Validate API provides a way to seamlessly integrate assessment of financial poistion into your workflow. The table below provides a summary of endpoints, which allow you to get "data in" and then "data out". You can use the [XAI Validate user interface](https://app.tictoc.ai) at any time to interact with your data and the automated assessment of financial position.
+    The following table provides information on the data sources that are supported and the essential details to include your requests. By default, you can use two data sources — your selected data aggregator and the option 'connect your own data'.
+        
+      |**Data Source**|**Data Provider Name**|**Date Provider Reference**|**Details**|
+      |---|---|---|---|
+      |illion ODS BrokerFlow|`ODS`|A list of your BrokerFlow `DocumentIds`.|You can provide multiple `DocumentIds` for each applicant.|
+      |illion ODS MultiBank|`MB`|None|We will provide a unique URL for each applicant. When used by your customers, their accounts will link and their data will automatically sync to the corresponding application in Xapii.|
+      |Yodlee v1.1|`YOD11`|A list of your Yodlee customer identifiers.|There is a one-to-one linking of the applicant to the Yodlee customer identifier.|
+      |Yodlee v1.1 (CDR "outsource service provider")|`YOD11`|A list of your Yodlee customer identifiers.|There is a one-to-one linking of the applicant to the Yodlee customer identifier.|
+      |Connect your own data|`EXT`|None|When using external API data (`EXT`) you'll be required to upload your data to the application. Check out `/financialvalidation/provideaccounts` for more information.|
+              
+    ## Getting Started  
+      The Xapii by Tiimely API provides a way to seamlessly integrate assessment of financial poistion into your workflow. The table below provides a summary of endpoints, which allow you to get "data in" and then "data out". You can use the [Xapii by Tiimely user interface](https://app.tiimely.com) at any time to interact with your data and the automated assessment of financial position.
       
     You'll need the following to start developing:
-      - sign-up for XAI Validate. [Contact us](mailto:enterprise@tictoc.ai) to discuss the right product and access to our `sandbox`
-      - your client credentials for the XAI Validate user interface and API. These will provided to you by Tic:Toc, and must be stored securely
+      - sign-up for Xapii by Tiimely. [Contact us](mailto:contact@tiimley.com) to discuss the right product and access to our `sandbox`
+      - your client credentials for the Xapii by Tiimely user interface and API. These will provided to you by Xapii by Tiimely, and must be stored securely
       - you're then ready to start developing against our test environment using the endpoints below. 
       
 
-      | Endpoint Name| Description |
-      |-----|-----|
-      | [`/application/create`](#/financialvalidation/application/create) | Create an application linking your applicants, and their external data aggregator reference identifiers.  |
-      | [`/application/manage`](#/financialvalidation/application/manage) | Update an existing application including adding "declared/stated" financials, updating applicant details or adding new external data aggregator reference identifiers.  |
-      | [`/application/get`](#/financialvalidation/application/get) | Retrieve an existing application using an application reference number.  |
-      | [`/application/beginurl/get`](#/financialvalidation/application/beginurl/get) | Retrieve a secure url to begin T3 applications.  |
-      | [`/provideaccounts`](#/financialvalidation/provideaccounts) | Connect your customers' account and transaction data against an existing application and applicant. This is ideal if you've sourced your own raw transaction data from core systems or through Open Banking.  |
-      | [`/application/getstatus`](#/application/getstatus) |  Monitor the progress of automated financial assessment.  |
-      | [`/result/getsummary`](#/result/getsummary)| Retrieve the results of automated financial assessment. The endpoint will surface automated assessments against your configured credit policy (where relevant), and validation figures for income, expenses, assets and liabilities. |
-      | [`/serviceability/getserviceability`](#/serviceability/getserviceability)| Calculate serviceability for your application including income, expense, debt, borrowing amount and ratios. |
-      | [`/serviceability/scenario/potentialmaxborrowing`](#/serviceability/scenario/potentialmaxborrowing) | Calculates the maximum potential borrowing amount based on the configuration of an ideal scenario.  |
-      | [`/token`](#/token) | XAI Validate uses OAuth2 authentication. Every time you call these endpoints you'll need to ensure you have a valid token.  |
-      | [`/credit/enquiry`](#/credit/enquiry) | (Coming soon!) Make a credit enquiry based on key identifying information for an applicant.  |
-      | [`/credit/getenquiry`](#/credit/getenquiry) | (Coming soon!) Retrieve the results of a credit enquiry detailing accounts and liabilities for an applicant.  |
-      | [`/credit/getsummary`](#/credit/getsummary) | (Coming soon!) Retrieve the summary of credit policy rules applied to the credit enquiry for an applicant.  |
-      | [`/document/upload`](#/document/upload) | Upload a document to an application or applicant. This endpoint returns a pre-signed URL to upload the document.  |
-      | [`/document/get`](#/document/get) | Retrieve information about a specific document linked to an application or applicant.  |
-      | [`/document/getlist`](#/document/getlist) | Retrieves the list of documents for an application or applicant.  |
-      | [`/document/download`](#/document/download) | Retrieves the pre-signed URL to download the document.  |
-      | [`/property/postcode/get`](#/property/postcode/get) | Retrieves the category of a postcode.  |     
-
     ## Data Model  
       
-    When you interact with the XAI Validate user interface and APIs you'll notice there's a clear structure to the data. We've designed the XAI Validate data model to be optimised for automating assessment of financial position. The data hierarchy is:
+    When you interact with the Xapii by Tiimely user interface and APIs you'll notice there's a clear structure to the data. We've designed the Xapii by Tiimely data model to be optimised for automating assessment of financial position. The data hierarchy is:
       - **application**: this is the structure that holds all other elements and represents a point-in-time product application from your customer
       - **applicants**: an application can have one or more applicants (currently limited to two). Applicants can belong to multiple applications, e.g. a customer applying for a credit card and a home loan would exist in two applications
       - **households**: your applicants belong to households. For convenience we will assign applicants to a single, default household at the start of application
@@ -66,19 +61,19 @@ info:
     ## References
     
     Here are a few resources to help you on your way:
-      - **User guide**: you can access this through the XAI Validate application. Simply login and navigate to your name in the top right.
+      - **User guide**: you can access this through the Xapii by Tiimely application. Simply login and navigate to your name in the top right.
       - **SDKs**: coming soon
-      - **Postman 'Collection'**: download this collection to help you interact with the XAI Validate APIs using Postman (coming soon).
+      - **Postman 'Collection'**: download this collection to help you interact with the Xapii by Tiimely APIs using Postman (coming soon).
       
   contact:
-    name: Tic:Toc Enterprise
-    url: https://api.tictoc.ai/public/v1.0/
-    email: enterprise@tictoc.ai
+    name: Xapii by Tiimely
+    url: https://api.tictoc.ai/public/
+    email: contact@tiimely.com
   version: 1.0.0
 servers:
-- url: https://api.stage.tictoc.ai/public/v1.0/
+- url: https://api.stage.tictoc.ai/public/
   description: Test server
-- url: https://api.tictoc.ai/public/v1.0/
+- url: https://api.tictoc.ai/public/
   description: Production server
 paths:
   /token:
@@ -92,18 +87,18 @@ paths:
       - url: https://auth.tictoc.ai/oauth2
         description: Production authorisation server
       description: >-
-        Before you can call the XAI Validate endpoints, you need to authenticate via the `/token` API. Successful authentication will return a token that can then be used to authorise your access to functional APIs. You'll need to include this token in the `Authorization` header in your calls.
-          
-        The `/token` API URL includes values in the query path. The URL will look like this:        
-          `https://{host}/oauth2/token?grant_type=client_credentials`
+        Before you can call the Xapii endpoints, you must authenticate via the /token API. Successful authentication will return a token that you can use to gain access to Xapii's functional APIs. 
+             
+        The /token API URL includes values in the query path and will look like this:
+        `https://{host}/oauth2/token?grant_type=client_credentials`
+                
+        The host value will either be `auth.tictoc.ai` for production or `auth.stage.tictoc.ai`` for testing.
 
-        The `host` value will either be `auth.tictoc.ai` for production or `auth.stage.tictoc.ai` for testing.
+        Remember to include this token in the `Authorization`` header of your calls. In addition, you'll also need to have the following information in your headers:
+        - Authorisation: A Base64 encoded client_id and client_secret provided to you by the Tiimely team as part of onboarding. The format is: `Basic {client_id}:{client_secret}`
+        - Content-Type: `application/x-www-form-urlencoded`
 
-        You'll also need to include information in your headers:
-          - `Authorization`: Base64 encoded `client_id` and `client_secret` provided to you by the XAI Validate team as part of onboarding. The format is: `"Basic {client_id}:{client_secret}"`
-          - `Content-Type`: the value is `"application/x-www-form-urlencoded"`
-
-        **Remember, your API credentials must be kept safe and secure. Do not share these or publish to publicly accessible locations such as your client-side code or GitHub.**
+        **Keep your credentials safe and secure. Don't share your credentials or publish them to publicly accessible locations such as your client-side code or GitHub.**
         
       operationId: getToken
       security:
@@ -145,43 +140,73 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
-  /financialvalidation/application/create:
+  /v1.0/financialvalidation/application/create:
     post:
       tags:
       - Application
       summary: Create an application with up to two applicants and their external data aggregator references.
       description:  >-
-        This endpoint allows you to create an "application", which is the object that holds all elements and represents a point-in-time product application from your customer. XAI Validate assigns each application a unique `ApplicationReferenceNumber` (Arn). You can use this value for subsequent calls.
+
+        ### Adding Applicants
+          When creating an application, provide your customers' details in `ApplicationContacts`, this includes email address, first name, last name and phone number. Xapii supports up to two applicants and will combine any jointly held accounts as a part of the data-linking process. 
+            
+          Note - An applicant's email address is unique and must remain consistent through the application process.
           
-          
-        When you create an application you determine the data sources and data validation type you need, namely:
-         1. "Detect and Position" or "Verify and Decision": do you want XAI Validate to identify your customers' financial position and provide you with the insights or do you want XAI Validate to automate financial validation decisioning for you? If you choose a "Verify and Decision" approach you need to provide your customers' "declared" financials to the [`/application/manage`](#/application/manageApplicationFinancials) endpoint.
-         2. your customers: you can link one or more applicants to an application. XAI Validate will combine any jointly held accounts as part of the linking process.
-         3. your customer data source: XAI Validate supports multiple data sources. See the table below for more information.
-           
+        ### Assessment Approach
+          Xapii supports two approaches to validation, **"Detect and Position"** or **"Verify and Decision"**. "Detect and Position" lets you gain insights into your customer's financial position. "Verify and Decision" empowers you to automate parts of your credit policy. 
+
+          We determine the approach you wish to use by the value within the `IsActualsOnly` parameter when you create an application. If this parameter is `true` (the default), Xapii returns a financial assessment once accounts are linked. If this parameter is `false`, a financial assessment will begin after adding the declared financials using the `/application/manage` endpoint. 
+
+          When using "Verify and Decision", set `IsActualsOnly` to `false` and send in the applicant's declared financials.
           
         The table below lists the parameters you need to populate based on your data validation choice above:
         
           | Function | Description |
           |-----|-----| 
-          | `ApplicationContacts` | These are the applicants applying for your product. XAI Validate currently supports up to two applicants.|
-          | `ExternalDataId`| This is the reference information for your existing data aggregator. XAI Validate currently supports multiple data sources - see the table below for information.|
-          | `ExternalApplicationReferenceNumber`| This is an application reference from your own system to allow you to easily correlate the XAI Validate `ApplicationReferenceNumber` with your own records.|
-          | `IsActualsOnly`| This parameter is only used by those clients that require a "verify and decision" approach to financial assessment. By setting this boolean to `false` these customers can then call the [`/application/manage`](#/application/manage) endpoint to add their applicants' "declared" or "stated" financials. This value will default to `true` meaning XAI Validate will return your applicants' "actual" financial position from the data. If don't pass a value for `IsActualsOnly`, then automated assessment will be triggered when you receive a successful response. If you're passing `"IsActualsOnly": false` then automated assessment will wait for you provide your applicants' "declared" financials via the [`/application/manage`](#/application/manageApplicationFinancials) endpoint.|
-          | `Lender`| This optional parameter can be used to drive the credit policy against which you would like your application assessed. The code will be defined as part of your onboarding process. |
+          | `ApplicationContacts` | Customers applying for your product — limited to two.|
+          | `ExternalDataId`| Reference information for your existing data aggregator - see the table below.|
+          | `ExternalApplicationReferenceNumber`| This is an application reference from your system to enable you to correlate the Xapii `ApplicationReferenceNumber` with your records. An `ApplicationReferenceNumber` will be returned from the `/application/create` endpoint.|
+          | `IsActualsOnly`| 	Defaults to `true` if omitted. If this parameter is `true`, then a financial assessment is made available after accounts are linked. If this is set to `false` then "declared fiancials" are to be added via the `application/manage` endpoint.|
+          | `Lender`| We will assign you a Lender code during onboarding. While this parameter is optional, if we have configured your credit policy to a set of business rules, it is best practice to include the Lender code. |
           
           
-        XAI Validate supports multiple data sources. The table below describes the supported data sources and the request specifics. Depending on your XAI Validate client setup you will be able to use two data sources by  default - your chosen data aggregator and the connect your own data options:
+        The following table provides information on the data sources that are supported and the essential details to include your requests. By default, you can use two data sources - your selected data aggregator and the option 'connect your own data'.
             
             
           | Data Source | `DataProviderName` | `DataProviderReference` | Details |
           |-----|-----|-----|-----|
           | illion ODS BrokerFlow | `ODS` | A list of your BrokerFlow `DocumentIds`| You can provide multiple `DocumentIds` for each applicant. |
-          | illion ODS MultiBank | `MB` | None | A unique URL will be returned when you call the endpoint, which your customers can use to link their accounts. Their data will automatically synch with your XAI Validate application. |
+          | illion ODS MultiBank | `MB` | None | A unique URL will be returned when you call the endpoint, which your customers can use to link their accounts. Their data will automatically synch with your Xapii by Tiimely application. |
           | Yodlee v1.1 | `YOD11` | A list of your Yodlee customer identifiers. | You should have a one to one linking of applicant to Yodlee customer identifier. |
           | Basiq (coming soon!) | `BSQ` | A list of your Basiq customer identifiers. | You should have a one to one linking of applicant to Basiq customer identifier. |
           | Connect your own data | `EXT` | None | By selecting `EXT` you will be required to upload your data to the application. Please see [`/financialvalidation/provideaccounts`](#/financialvalidation/provideaccounts) for more information. |  
-        
+
+
+          ### Body Params
+          |**Parameter**|**Type**|**Required**|**Description**|
+          |---|---|---|---|
+          |**Parameter**|**Type**|**Required**|**Description**|
+          |`ExternalApplicationReferenceNumber`|string||Unique application identifier from your system.|
+          |`ApplicationContacts`|array of objects||Customers applying for your product — limited to two.|
+          |`EmailAddress`|string|required|The applicant's unique email address — must remain consistent throughout the application.|
+          |`FirstName`|string|required|The applicant's first name.|
+          |`Surname`|string|required|The applicant's last name.|
+          |`PhoneNumber`|string||The applicant's phone number.|
+          |`ExternalDataId`|object|required|Reference information for your existing data aggregator.|
+          |`DataProviderName`|string|required|The name of your data provider. ( `YOD11` (for Yodlee API 1.1), `ODS` for illion ODS, `MB` for illion ODS BankStatements "Multibank", or `EXT` if you wish to connect your own data.|
+          |`DataProviderReference`|array of strings||List of external reference identifiers for your data provider.|
+             
+          ### Response  
+          |**Parameter**|**Type**|**Required**|**Description**|
+          |---|---|---|---|
+          |`ApplicationReferenceNumber`|string|required|Unique Xapii Application reference number for the application.|
+          |`CreatedOn`|date-time|required|Timestamp indicating when the application was created.|
+          |`RequestId`|string|required|Unique identifier for the request|
+          |`Applicants`|array of objects|required|List of applicants within the application.|
+          |`EmailAddress`|string|required|The applicant's unique email address — must remain consistent throughout the application.|
+          |`ContactId`|integer||The applicants unique identifier.|
+          |`LinkUrl`|string||A unique data-linking URL for illion ODS or illion MultiBank customers.|
+                    
       operationId: createApplication
       parameters:
         - in: header
@@ -216,46 +241,36 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-  /financialvalidation/application/manage:
+  /v1.0/financialvalidation/application/manage:
     post:
       tags:
       - Application
-      summary: Add or change "stated/declared" financials for an existing application,
-        or link additional data aggregation sessions.
+      summary: Add or change "stated/declared" financials for an existing application, or link additional data.
       description:  >-
-    
-        This versatile endpoint allows you to perform the following functions against an existing application:
-          
-          | Function | Description |
-          |-----|-----|        
-          | Add/edit "stated/declared" financials against an application | This is only relevant if you require a "declare and verify" approach to financial assessment, and have passed the `"IsActualsOnly": false` parameter in your [`/application/create`](#Application/Create) request.|
-          | Link additional data source to an application |This is useful when your applicants provide additional bank account information thorugh your data aggregator, and you need to rerun the automated assessment. Please see the table below for data source details. |
-          | Add/edit applicants within an application| Add new applicants or edit existing. |
-         
-        When you call the endpoint, automated assessment will commence once you receive a successful response. You can monitor the progress using the [`/application/getstatus`](#/application/getstatus) endpoint. However, you can control when the automated assessments is started by using the `ApplicationStatus` parameter:
-          - `Commenced`: hold automated assessment until you're ready. This is helpful if you're gradually building an application object as your customer completes their application.
-          - `Assess`: trigger automated asssessment. As this is an optional parameter, `Assess` is the default status.
+        This versatile endpoint allows you to:
+          - Add or edit declared financials to an application
+          - ink additional data sources to an application
+          - Add or edit applicants on an application
             
-        Please note the assessment levels XAI Validate currently supports for providing "stated/declared" financials. These have been designed in line with lending best practices:
-          
+        ### Financial Validation
+          Adding declared financials is only valuable if you employ a "Declare and Verify" approach to assessment. You set isActuals to false in your initial /application/create request.
+
+          By default, when you call /application/manage, the automated assessment will commence once you receive a successful response. You can monitor the progress using the /application/getstatus endpoint. You can control this behaviour with the ApplicationStatus parameter. 
+
+          There are two valid statuses:
+            - `Assess` - by default, automated assessment occurs with every interaction. 
+            - `Commenced` - holds automated assessment until you're ready. Use this if you gradually build an application object as your customer fills out their application.
+
+          ### Levels of Assessment
+                      
           | Assessment Level | Financial Types |
           |-----|-----|
-          | `Application` | These are application-level financials (`DeclaredFinancialsApplication`) and currently accommodate  `AssetsCash` for assessment of your applicants' deposit|
-          | `Household` | Your applicants will belong to `Households` and the `DeclaredFinancialsHousehold` object currently supports `ExpensesMonthly` for your applicants' household's monthly expenses |
-          | `Applicant` | These are the applicant-specific financials, which includes a `IncomeSalary` figure, a list of `IncomeRental` values,  a list of `LiabilitiesHomeLoans` values, and single values for `LiabilitiesCreditCard*` and `LiabilitiesPersonalLoan*`|
+          | `Application` | This accounts for application-level financials such as cash deposits by adding AssetsCash into the `DeclaredFinancialsApplication` object. |
+          | `Household` | 	Households hold applicant details and are used to collect and assess your customer's monthly living expenses. Use the `DeclaredFinancialsHousehold` to add their non-discretionary spending.  |
+          | `Applicant` | Within `ApplicationContacts`, you can add or edit personal details and include applicant-specific financials such as Income, Credit Cards, and Liabilities. |
          
-         
-        XAI Validate supports multiple data sources. The table below describes the supported data sources and the request specifics. Depending on your XAI Validate client setup you will be able to use two data sources by  default - your chosen data aggregator and the connect your own data options:
-            
-            
-          | Data Source | `DataProviderName` | `DataProviderReference` | Details |
-          |-----|-----|-----|-----|
-          | illion ODS BrokerFlow | `ODS` | A list of your BrokerFlow `DocumentIds`| You can provide multiple `DocumentIds` for each applicant. |
-          | illion ODS MultiBank | `MB` | None | A unique URL will be returned when you call the endpoint, which your customers can use to link their accounts. Their data will automatically synch with your XAI Validate application. |
-          | Yodlee v1.1 | `YOD11` | As list of your Yodlee customer identifiers. | You should have a one to one linking of applicant to Yodlee customer identifier. |
-          | Basiq (coming soon!) | `BSQ` | As list of your Basiq customer identifiers. | You should have a one to one linking of applicant to Basiq customer identifier. |
-          | Connect your own data | `EXT` | None | By selecting `EXT` you will be required to upload your data to the application. Please see [`/financialvalidation/provideaccounts`](#/financialvalidation/provideaccounts) for more information. |  
-        
+          Xapii will compare these declared figures to the detected actuals in an applicant's linked accounts to ensure they meet your credit policy. 
+
       operationId: manageApplicationFinancials
       parameters:
         - in: header
@@ -290,7 +305,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-  /financialvalidation/application/get:
+  /v1.0/financialvalidation/application/get:
     post:
       tags:
       - Application
@@ -334,7 +349,124 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-  /financialvalidation/application/beginurl/get:
+  /v1.1/application/delete:
+    post:
+      tags:
+      - Application
+      summary: Initiates the deletion of one or more applications.
+      description:  >-
+        Request the deletion of an application through the complete deidentification of any customer and financial data. You can request one or many application reference numbers to be deleted. We will delete each application asynchronously.
+
+        **Request**  
+          Provide a list of Application Reference Numbers
+          
+        **Response**  
+          We will return a unique `DeleteProcessId`, which you can use to enquire on the status of the delete request.
+          
+        ### This is an irreversible action.
+                    
+      operationId: applicationDelete
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: The JSON request body for the POST.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationDeleteRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationDeleteResponse'
+        401:
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRequestError'
+        422:
+          description: Unable to delete application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRequestError'
+      x-codegen-request-body-name: RequestBody
+  /v1.1/application/deletestatus:
+    get:
+      tags:
+      - Application
+      summary: Retrieves the status of an application delete request.
+      description:  >-
+        After submitting an application delete request, use this API to get the status of that process.
+             
+        **Request**  
+          - Since the request is a `GET`, it contains no body. 
+          - A query string in the URL must be supplied with either the `DeleteProcessId` or `ApplicationReferenceNumber`.
+           
+        The supported request query strings are:
+           
+          | `querystring` | Description |
+          |-----|-----|
+          |`id=<DeleteProcessId>`|Retrieves status of all application deletes associated to the Id|
+          |`arn=<ApplicationReferenceNumber>`|Retrieves the status of the ApplicationReferenceNumber provided|
+              
+        For example:
+        /v1.1/application/deletestatus?id=9656123e-011f-4542-87c1-e46263ffebe6
+        OR    
+        /v1.1/application/deletestatus?arn=1111111111 
+                
+        **Response**   
+          The response will return a unique `DeleteProcessId` and an array of one or more Application Delete Status Results.
+                    
+      operationId: applicationDeleteStatusEnquiry
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true      
+        - in: query
+          name: id
+          schema:
+            type: string
+            format: uuid
+          example: "9656123e-011f-4542-87c1-e46263ffebe6"
+          required: false 
+        - in: query
+          name: arn
+          schema:
+            type: string
+          example: "1111111111"
+          required: false
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationDeleteStatusResponse'
+        401:
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRequestError'
+        422:
+          description: Unable to retrieve application delete status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRequestError'
+      x-codegen-request-body-name: RequestBody
+  /v1.0/financialvalidation/application/beginurl/get:
     post:
       tags:
       - Application
@@ -380,7 +512,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-  /financialvalidation/provideaccounts:
+  /v1.0/financialvalidation/provideaccounts:
     post:
       tags:
       - Application
@@ -443,7 +575,7 @@ paths:
         This endpoint allows you to upload your customers data in a specific format. The unique upload URL will be returned in the [`/financialvalidation/provideaccounts`](#/manageAccountTransaction) endpoint response. A unique URL will be returned per applicant.
           
         Please note:
-        * you will `PUT` the object to the `UploadUrl` directly, not to the XAI Validate endpoint.
+        * you will `PUT` the object to the `UploadUrl` directly, not to the Xapii by Tiimely endpoint.
         * no headers are required in the `PUT`.
           
         Once you have successfully uploaded the data, the automated financial validation process will be triggered.
@@ -490,8 +622,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-
-  /enrichment/categorise:
+  /v1.0/enrichment/categorise:
     post:
       tags:
       - Transactions
@@ -553,11 +684,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-  /financialvalidation/result/getsummary:
+  /v1.0/financialvalidation/result/getsummary:
     post:
       tags:
       - Results
-      summary: Retrieve a summary of XAI Validate automated assessment of financial
+      summary: Retrieve a summary of Xapii by Tiimely automated assessment of financial
         position.
       description: >-
       
@@ -567,10 +698,10 @@ paths:
           
           | Object | Description |
           |-----|-----|   
-          | `AssessmentSummary` | This list of objects is tailored to those clients undertaking "declare and verify" financial assessment. Each object in the list will align to a client-specific credit policy setting, including an automated decision outcome, the applicant's "declared" financials, the "actual" financials found by XAI Validate and any "reviewed" financials from your users' interaction with the XAI Validate user interface.|
+          | `AssessmentSummary` | This list of objects is tailored to those clients undertaking "declare and verify" financial assessment. Each object in the list will align to a client-specific credit policy setting, including an automated decision outcome, the applicant's "declared" financials, the "actual" financials found by Xapii by Tiimely and any "reviewed" financials from your users' interaction with the Xapii by Tiimely user interface.|
           | `ApplicationResults` | This object includes the results for application-specific automated assessments, specifically your applicants' total asset position (i.e. deposit).|
-          | `HouseholdResults` | This object includes key descriptive statistics from the XAI Validate assessment of household-specific expenses including non-discretionary, discretionary and any removed expenses. |
-          | `ApplicationContactResults` | This object contains detailed information about the XAI Validate assessment of your applicants' financial position. Individual objects will be returned for income (salary, rental and other), home loans, credit cards and personal loans. |
+          | `HouseholdResults` | This object includes key descriptive statistics from the Xapii by Tiimely assessment of household-specific expenses including non-discretionary, discretionary and any removed expenses. |
+          | `ApplicationContactResults` | This object contains detailed information about the Xapii by Tiimely assessment of your applicants' financial position. Individual objects will be returned for income (salary, rental and other), home loans, credit cards and personal loans. |
         
       operationId: getResultsSummary
       parameters:
@@ -606,7 +737,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-  /income/getlist:
+  /v1.0/income/getlist:
     post:
       tags:
       - Results
@@ -654,7 +785,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-  /financialvalidation/result/getexpensesummary:
+  /v1.0/financialvalidation/result/getexpensesummary:
     post:
       tags:
       - Results
@@ -662,7 +793,7 @@ paths:
         position.
       description: >-
       
-        This endpoint provides you with a breakdown of expenses by household and category. The expense categories will align to your own custom categories, where configured. If none are configured we will return expense summary by the LIXI Living Expense aligned XAI Validate "assessment category".
+        This endpoint provides you with a breakdown of expenses by household and category. The expense categories will align to your own custom categories, where configured. If none are configured we will return expense summary by the LIXI Living Expense aligned Xapii by Tiimely "assessment category".
           
         You can retrieve the expense summary by passing through the `ApplicationReferenceNumber` returned when you created your application. The response body will summarise expenses by household and category, including:
           - Non-discretionary expenses: the total value, volume, count and share of expenses deemed to be non-discretionary
@@ -704,7 +835,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody  
-  /financialvalidation/application/getstatus:
+  /v1.0/financialvalidation/application/getstatus:
     post:
       tags:
       - Jobs
@@ -719,7 +850,7 @@ paths:
           - `PROCESSING` - task processing is underway
           - `COMPLETED` - task processing has completed successfully
           - `SUPERSEDED` - a subsequent validation job has taken precendence over an existing job
-          - `FAILED` - a task has failed processing. XAI Validate will retry the task, so continue to monitor
+          - `FAILED` - a task has failed processing. Xapii by Tiimely will retry the task, so continue to monitor
           - `DEAD` - oops... something's gone wrong. No further processing takes place - we'll monitor the system for these issues.
         
       operationId: getFinancialValidationJob
@@ -756,7 +887,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-  /financialvalidation/status/subscribe:
+  /v1.0/financialvalidation/status/subscribe:
     post:
       tags:
       - Jobs
@@ -814,7 +945,7 @@ paths:
                       properties:
                         ApplicationReferenceNumber:
                           type: string
-                          description: Unique XAI Validate application reference number (Arn). Results
+                          description: Unique Xapii by Tiimely application reference number (Arn). Results
                             for one application can be retrieved at a time.
                           example: AABB12345
                         ProcessingStatus:
@@ -850,7 +981,7 @@ paths:
                 '200':
                   description: OK       
       x-codegen-request-body-name: RequestBody
-  /serviceability/getserviceability:
+  /v1.0/serviceability/getserviceability:
     post:
       tags:
       - Serviceability
@@ -865,7 +996,7 @@ paths:
           
         You will be required to supply the following required information:
           * `ApplicationReferenceNumber`: this will extract validated financials from the application object from earlier processes.
-          * `ConfigurationSet`: the lending policy configuration for which you wish to calculate serviceability metrics. This will be the lender or product enumeration you have configured within XAI Validate.
+          * `ConfigurationSet`: the lending policy configuration for which you wish to calculate serviceability metrics. This will be the lender or product enumeration you have configured within Xapii by Tiimely.
           * `NewFacilities`: specifics of the new debt facilities. This is optional - the new facility information is set in the `application/manage` call.
           * `ValidationTypes`: the financial values type to consume within the serviceability calculations. You can specify the financial value type for `Income`, `Expenses` and `Liabilities`:
               * `STATED`: customer declared financials
@@ -905,7 +1036,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
-  /serviceability/scenario/potentialmaxborrowing:
+  /v1.0/serviceability/scenario/potentialmaxborrowing:
     post:
       tags:
       - Serviceability
@@ -931,7 +1062,7 @@ paths:
 
         The following information is required:
           * `ApplicationReferenceNumber`: to gather the financials of the  ValidationTypes indicated in the request from the application object from earlier processes.
-          * `ConfigurationSet`: the lending policy configuration used to calculate serviceability metrics. This will be the lender or product enumeration you have configured within XAI Validate.
+          * `ConfigurationSet`: the lending policy configuration used to calculate serviceability metrics. This will be the lender or product enumeration you have configured within Xapii by Tiimely.
           * `ValidationTypes`: the financial values consumed within the potential max borrowing amount calculations. You can specify one or none of the validation types below:
               * `STATED`: customer declared financials
               * `ACTUAL`: automatically detected financials from linked data
@@ -971,139 +1102,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
-  /credit/enquiry:
-    post:
-      tags:
-      - Credit
-      summary: (Coming soon!) Make a credit enquiry based on key applicant identifying information.
-      description:  >-
-        This endpoint allows you to perform a credit enquiry on behalf of an applicant". 
-        
-        Key identifying information must supplied to perform the enquiry. If the enquiry has been performed for the same applicant in the last 90 days, the most recent enquiry will be re-used.
-        
-      operationId: creditEnquiry
-      parameters:
-        - in: header
-          name: x-api-key
-          schema:
-            type: string
-          required: true
-      requestBody:
-        description: The JSON request body for the POST.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RequestCreditEnquiry'
-        required: true
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseCreditEnquiry'
-        401:
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseRequestError'
-        422:
-          description: Unable to retrieve application.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseRequestError'
-      x-codegen-request-body-name: RequestBody
-  /credit/getenquiry:
-    post:
-      tags:
-      - Credit
-      summary: (Coming soon!) Retrieve the results of a credit enquiry detailing accounts and liabilities for an applicant.
-      description:  >-
-        This endpoint allows you to retrieve the details extracted from the credit enquiry made on behalf of an applicant. 
-        
-        You must supply the CreditEnquiryId returned by the /credit/enquiry API call.
-        
-      operationId: getEnquiry
-      parameters:
-        - in: header
-          name: x-api-key
-          schema:
-            type: string
-          required: true
-      requestBody:
-        description: The JSON request body for the POST.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RequestCreditGetEnquiry'
-        required: true
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseCreditGetEnquiry'
-        401:
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseRequestError'
-        422:
-          description: Unable to retrieve application.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseRequestError'
-      x-codegen-request-body-name: RequestBody
-  /credit/getsummary:
-    post:
-      tags:
-      - Credit
-      summary: (Coming soon!) Retrieve the summary of credit policy rules applied to the credit enquiry for an applicant.
-      description:  >-
-        This endpoint allows you to retrieve the summary of the credit policy rules applied to the credit enquiry made on behalf of an applicant. 
-        
-        You must supply the CreditEnquiryId returned by the /credit/enquiry API call.
-        
-      operationId: getSummary
-      parameters:
-        - in: header
-          name: x-api-key
-          schema:
-            type: string
-          required: true
-      requestBody:
-        description: The JSON request body for the POST.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RequestCreditGetSummary'
-        required: true
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseCreditGetSummary'
-        401:
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseRequestError'
-        422:
-          description: Unable to retrieve application.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseRequestError'
-      x-codegen-request-body-name: RequestBody
-  /financialvalidation/sampleapplication/create:
+  /v1.0/financialvalidation/sampleapplication/create:
     post:
       tags:
       - Testing
@@ -1128,7 +1127,7 @@ paths:
         
           | Parameter | Description |
           |-----|-----| 
-          | `ProvideAccounts` | Boolean as to whether you want to provide your own data or use the standard test data provided by XAI Validate. The default is `false`. If you specify `true` the response payload will include unqiue URLs against which you can `PUT` your own data. Please see [`/financialvalidation/provideaccounts`](#/manageAccountTransaction)|
+          | `ProvideAccounts` | Boolean as to whether you want to provide your own data or use the standard test data provided by Xapii by Tiimely. The default is `false`. If you specify `true` the response payload will include unqiue URLs against which you can `PUT` your own data. Please see [`/financialvalidation/provideaccounts`](#/manageAccountTransaction)|
           | `Lender`| Specify the lender code configured against your account to drive the validation use one of your credit policies.|
 
         The response will include your the `ApplicationReferenceNumber` (`Arn`) of your test application. If you specify `"ProvideAccounts": true` in the request, the response will also include the unique URL against which you can `PUT` your data (see  [`/financialvalidation/provideaccounts`](#/manageAccountTransaction)).
@@ -1168,7 +1167,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-  /document/upload:
+  /v1.0/document/upload:
     post:
       tags:
       - Document
@@ -1263,7 +1262,7 @@ paths:
         This endpoint allows you to upload a document to an application. The unique upload URL will be returned in the [`/document/upload`](#/document/upload) endpoint response.
             
         Please note:
-          * you will `PUT` the object to the `UploadDocumentUrl` directly, not to the XAI Validate endpoint.
+          * you will `PUT` the object to the `UploadDocumentUrl` directly, not to the Xapii by Tiimely endpoint.
           * no headers are required in the `PUT`.
           * the document `body` should be specified as `binary`.
       operationId: uploadDocumentLink
@@ -1293,7 +1292,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-  /document/getlist:
+  /v1.0/document/getlist:
     post:
       tags:
       - Document
@@ -1374,7 +1373,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-  /document/get:
+  /v1.0/document/get:
     post:
       tags:
       - Document
@@ -1443,7 +1442,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-  /document/download:
+  /v1.0/document/download:
     post:
       tags:
       - Document
@@ -1524,8 +1523,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseRequestError'
       x-codegen-request-body-name: RequestBody
-
-  /property/postcode/get:
+  /v1.0/property/postcode/get:
     post:
       tags:
       - Property
@@ -1689,7 +1687,7 @@ components:
               type: boolean
               description: "Boolean value indicating if the application requires a\
                 \ \"declare/stated\" versus \"actual\" automated assessment. This\
-                \ value defaults to `true` meaning that XAI Validate will always return\
+                \ value defaults to `true` meaning that Xapii by Tiimely will always return\
                 \ \"actual\" automated assessment. If this aligns to your use case,\
                 \ then this parameter can be omitted. If you do need to provide \"\
                 declare/stated\", then you need to provide this parameter with a `false`\
@@ -1710,7 +1708,7 @@ components:
       properties:
         ApplicationReferenceNumber:
           type: string
-          description: Unique XAI Validate Application Reference Number (Arn).
+          description: Unique Xapii by Tiimely Application Reference Number (Arn).
         CreatedOn:
           type: string
           description: Timestamp indicating when the application was created.
@@ -1754,7 +1752,7 @@ components:
       properties:
         ApplicationReferenceNumber:
           type: string
-          description: Unique XAI Validate Application Reference Number (Arn).
+          description: Unique Xapii by Tiimely Application Reference Number (Arn).
         CreatedOn:
           type: string
           description: Timestamp indicating when the application was created.
@@ -1805,7 +1803,7 @@ components:
           properties:
             ApplicationReferenceNumber:
               type: string
-              description: Unique XAI Validate application reference number (Arn).
+              description: Unique Xapii by Tiimely application reference number (Arn).
                 Results for one application can be retrieved at a time.
           description: Request object containing Application Create payload.
     ResponseGetResultsSummary:
@@ -1818,7 +1816,7 @@ components:
           properties:
             ApplicationReferenceNumber:
               type: string
-              description: Unique XAI Validate application reference number (Arn).
+              description: Unique Xapii by Tiimely application reference number (Arn).
                 Results for one application can be retrieved at a time.
             ExternalApplicationReferenceNumber:
               type: string
@@ -1889,7 +1887,7 @@ components:
                   is "account-based".
               ActualAmount:
                 type: number
-                description: Actual amount identified by XAI Validate automated assessment
+                description: Actual amount identified by Xapii by Tiimely automated assessment
                   - null if not relevant.
               ValidatedAmount:
                 type: number
@@ -1901,7 +1899,7 @@ components:
                   if not relevant.
               ActualFrequency:
                 type: string
-                description: Actual frequency identified by XAI Validate automated
+                description: Actual frequency identified by Xapii by Tiimely automated
                   assessment - null if not relevant.
               ValidatedFrequency:
                 type: string
@@ -2697,7 +2695,7 @@ components:
           properties:
             ApplicationReferenceNumber:
               type: string
-              description: Unique XAI Validate application reference number (Arn).
+              description: Unique Xapii by Tiimely application reference number (Arn).
                 Results for one application can be retrieved at a time.
             ExternalApplicationReferenceNumber:
               type: string
@@ -2741,7 +2739,7 @@ components:
                   properties:
                     ExpenseCategory:
                       type: string
-                      description: The name of the expense assessment category you've configured. If no custom categories are configured, the default XAI Validate assessment categories are returned.
+                      description: The name of the expense assessment category you've configured. If no custom categories are configured, the default Xapii by Tiimely assessment categories are returned.
                       enum:
                         - Alcoholic beverages
                         - Higher education, vocational training and professional association
@@ -2869,7 +2867,7 @@ components:
           properties:
             ApplicationReferenceNumber:
               type: string
-              description: Unique XAI Validate application reference number (Arn).
+              description: Unique Xapii by Tiimely application reference number (Arn).
                 Results for one application can be retrieved at a time.
             GroupId:
               type: string
@@ -2887,7 +2885,7 @@ components:
       properties:
         ApplicationReferenceNumber:
           type: string
-          description: Unique XAI Validate application reference number (Arn). Results
+          description: Unique Xapii by Tiimely application reference number (Arn). Results
             for one application can be retrieved at a time.
         GroupId:
           type: string
@@ -2948,7 +2946,7 @@ components:
       properties:
         ApplicationReferenceNumber:
           type: string
-          description: Unique XAI Validate application reference number (Arn). Results
+          description: Unique Xapii by Tiimely application reference number (Arn). Results
             for one application can be retrieved at a time.
           example: AABB12345
         ProcessingStatus:
@@ -3419,7 +3417,7 @@ components:
         ApplicationReferenceNumber:
           type: string
           example: AABB1234567
-          description: Unique XAI Validate Application Reference Number (Arn).
+          description: Unique Xapii by Tiimely Application Reference Number (Arn).
             This will be returned from the [`/application/create`](#/application/createApplication) endpoint.
         ApplicationContacts:
           type: array
@@ -3896,7 +3894,7 @@ components:
           description: Boolean to indicate whether you want a single or joint test application.
         ProvideAccounts:
           type: boolean
-          description: Boolean as to whether you want to provide your own data or use the standard test data provided by XAI Validate. The default is false. If you specify true the response payload will include unqiue URLs against which you can PUT your own data. Please see /financialvalidation/provideaccounts
+          description: Boolean as to whether you want to provide your own data or use the standard test data provided by Xapii by Tiimely. The default is false. If you specify true the response payload will include unqiue URLs against which you can PUT your own data. Please see /financialvalidation/provideaccounts
         Lender:
           description: This optional parameter can be used to drive the credit policy against which you would like your application assessed. The code will be defined as part of your onboarding process.
           example: YourLenderCreditPolicyCode
@@ -3972,198 +3970,7 @@ components:
           type: string
           description: 'Unique identifier for the request that generated the error.     '
           example: RojLCjD-ywPPMNg=
-    
-    RequestCreditEnquiry:
-      required:
-      - ApplicationReferenceNumber
-      - FirstName
-      - Surname
-      - DateOfBirth
-      - DriversLicenseNumber
-      - DriversLicenseState
-      - ResidentialAddress
-      type: object
-      properties:
-        ApplicationReferenceNumber:
-          type: string
-          description: Unique identifier for the application.
-          example: "ABC123456"
-        FirstName:
-          type: string
-          description: Applicant first name - this is required.
-        MiddleName:
-          type: string
-          description: Applicant middle name.
-        Surname:
-          type: string
-          description: Applicant last name - this is required.
-        DateOfBirth:
-          type: string
-          description: Applicant date of birth - this is required.
-          format: date
-        DriversLicenseNumber:
-          type: string
-          description: Applicant drivers license number - this is required.
-        DriversLicenseState:
-          type: string
-          description: Applicant drivers license state - this is required.
-        ResidentialAddress:
-          type: string
-          description: Applicant's residential address as a string
-          example: 123 Example Street, Demoville, 2222, NSW
-    ResponseCreditEnquiry:
-      type: object
-      properties:
-        CreditEnquiryId:
-          type: string
-          description: Unique identifier for the credit enquiry.
-        ApplicationReferenceNumber:
-          type: string
-          description: Unique identifier for the application.
-          example: "ABC123456"
-        RequestId:
-          type: string
-          example: RojLCjD-ywPPMNg=
-          description: unique request identifier
-    RequestCreditGetEnquiry:
-      type: object
-      properties:
-        CreditEnquiryId:
-          type: string
-          description: Unique identifier for the credit enquiry.
-    ResponseCreditGetEnquiry:
-      type: object
-      properties:
-        CreditEnquiryId:
-          type: string
-          description: Unique identifier for the credit enquiry.
-        ApplicationReferenceNumber:
-          type: string
-          description: Unique identifier for the application.
-          example: "ABC123456"
-        TBD:
-          type: string
-          description: To be determined.
-        RequestId:
-          type: string
-          example: RojLCjD-ywPPMNg=
-          description: unique request identifier
-    RequestCreditGetSummary:
-      type: object
-      properties:
-        ApplicationReferenceNumber:
-          type: string
-          description: Unique identifier for the application.
-          example: "ABC123456"
-        CreditEnquiryId:
-          type: string
-          description: Unique identifier for the credit enquiry.
-    ResponseCreditGetSummary:
-      required:
-      - Application
-      type: object
-      properties:
-        Application:
-          type: object
-          properties:
-            ApplicationReferenceNumber:
-              type: string
-              description: Unique XAI Validate application reference number (Arn).
-                Results for one application can be retrieved at a time.
-            ExternalApplicationReferenceNumber:
-              type: string
-              description: Unique application identifier from your own system.
-          description: Request object containing Application Create payload.
-        CreditReportAccountSummary:
-          type: array
-          description: Financial Validate result objects for each automated assessment.
-          items:
-            type: object
-            properties:
-              FinancialInstitution:
-                type: string
-                example: "Commonwealth Bank of Australia"
-                description: the financial institution name from an agreed enumeration
-              AccountBsb:
-                type: string
-                example: 065-125
-                description: the account BSB if available
-              AccountNumber:
-                type: string
-                example: 112xxxx4658
-                description: Account number from the source system. This can be obfuscated before providing. This will form part of the matching logic to identify joint account ownership.
-              AccountType:
-                type: string
-                example: TRANSACTION
-                description: Account type indicator. This will be used to drive configuration within your client profile. If this isn't provided the account type default will be `OTHER` 
-                enum:
-                - TRANSACTION
-                - CREDITCARD
-                - HOMELOAN
-                - PERSONALLOAN
-                - OTHER
-              AccountName:
-                type: string
-                example: PARTY ACCOUNT
-                description: The name of the account.
-              CurrentBalance:
-                type: number
-                example: -5486.15
-                description: The balance of the account at the request point of time. Can be positive, zero or negative
-              AvailableBalance:
-                type: number
-                example: -5454.15
-                description: Balance representing the amount of funds available for transfer. Assumed to be zero or positive. This should be the `CurrentBalance` – sum(pending transactions)
-              CreditLimit:
-                type: number
-                example: 10000
-                description: The maximum amount of credit available for the account.
-              AccountAge:
-                type: number
-                example: 12
-                description: Age in months of account.
-        ApplicationContactResults:     
-          type: array
-          description: Credit assessment result objects for each applicant.
-          items:
-            type: object
-            required:
-            - ContactId
-            - Version
-            - CreditSummary
-            properties:
-              ContactId:
-                type: integer
-                description: Unique identifier for the contact record created for your applicant.
-              Version:
-                type: string
-                description: The version of the application that was created  
-              CreditPolicyRuleSummary:
-                type: array
-                description: Summary object for Credit Policy rules.
-                items:
-                  type: object
-                  properties:
-                    AssessmentStatus:
-                      type: string
-                      description: Overall status of the assessment - returns
-                        FAILED if any individual results are FAILED.
-                      enum:
-                        - PASSED
-                        - FAILED
-                        - REVIEWED
-                    CreditPolicyRuleName:
-                      type: string
-                      description: The configured credit policy rule
-                      example: Evidence of payment arrears
-                    CreditPolicyRuleValue:
-                      type: integer
-                      description: The configured credit policy rule result form the credit bureau.
-                      example: 2 
-        RequestId:
-          type: string
-          example: RojLCjD-ywPPMNg=
-          description: unique request identifier
+  
     RequestGetApplication:
       required:
       - ApplicationReferenceNumber
@@ -4185,7 +3992,7 @@ components:
           properties:
             ApplicationReferenceNumber:
               type: string
-              description: Unique XAI Validate Application Reference Number (Arn).
+              description: Unique Xapii by Tiimely Application Reference Number (Arn).
                 This will be returned from the [`/application/create`](#/application/createApplication)
                 endpoint.
             ApplicationId:
@@ -4264,7 +4071,7 @@ components:
             DeclaredFinancialsApplication:
               type: object
               description: Application-specific "declared financials". These will
-                be consumed as part of XAI Validate's automated assessment, and compared
+                be consumed as part of Xapii by Tiimely's automated assessment, and compared
                 to "actual financials" identified as part of the AI models, within
                 your credit policy tolerances.
               properties:
@@ -4285,7 +4092,7 @@ components:
                   DeclaredFinancialsHousehold:
                     type: object
                     description: Household-specific "declared financials". These will
-                      be consumed as part of XAI Validate's automated assessment,
+                      be consumed as part of Xapii by Tiimely's automated assessment,
                       and compared to "actual financials" identified as part of the
                       AI models, within your credit policy tolerances.
                     properties:
@@ -4401,7 +4208,7 @@ components:
                         DeclaredFinancialsApplicant:
                           type: object
                           description: Applicant-specific "declared financials". These
-                            will be consumed as part of XAI Validate's automated assessment,
+                            will be consumed as part of Xapii by Tiimely's automated assessment,
                             and compared to "actual financials" identified as part
                             of the AI models, within your credit policy tolerances.
                           properties:
@@ -5341,7 +5148,71 @@ components:
       items: 
         type: object
         $ref: '#/components/schemas/Income'         
-              
+    ApplicationDeleteRequest:
+      required:
+      - ApplicationReferenceNumbers      
+      type: object
+      properties:
+        ApplicationReferenceNumbers:            
+          type: array          
+          description: Object containing Application Reference Numbers to be Deleted.
+          items:
+            type: string
+            example: "111111111111"
+            description: String array detailing the list of Application Reference Numbers that have been requested to delete.                       
+    ApplicationDeleteResponse:
+      required:
+      - DeleteProcessId      
+      type: object
+      properties:
+        DeleteProcessId:
+          type: string
+          description: The unique application delete process reference number. 
+          example: 9656123e-011f-4542-87c1-e46263ffebe6             
+    ApplicationDeleteStatusResponse:
+      required:
+      - DeleteProcessId    
+      - Results  
+      type: object
+      properties:
+        DeleteProcessId:
+          type: string
+          description: The unique application delete process reference number. 
+          example: 9656123e-011f-4542-87c1-e46263ffebe6   
+        Results:            
+          type: array
+          description: Object containing Application Delete Statuses.
+          items:
+            required:
+            - PostcodeCategory
+            - MinimumValuationRequired
+            - PropertyType
+            type: object
+            properties:
+              ApplicationReferenceNumber:
+                type: string
+                description: The Application reference Number.
+                example: "111111111111"
+              StatusCode:
+                type: string
+                description: The status code of the application delete.
+                example: "COMPLETED"
+                enum: 
+                - QUEUED
+                - INPROGRESS
+                - COMPLETED
+                - FAILED
+              Status:
+                type: string
+                example: "Delete request sucessfully completed processing."
+                description: A description of the application delete status.
+              StatusOn: 
+                type: string
+                format: date-time
+                description: The date the delete status was last updated.
+            description: String array detailing the statuses of applications that have been requested to delete.   
+
+
   securitySchemes:
     tokenAuth:
       type: http
