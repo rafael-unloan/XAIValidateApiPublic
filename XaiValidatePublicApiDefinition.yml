@@ -92,13 +92,13 @@ paths:
         The /token API URL includes values in the query path and will look like this:
         `https://{host}/oauth2/token?grant_type=client_credentials`
                 
-        The host value will either be `auth.tictoc.ai` for production or `auth.stage.tictoc.ai`` for testing.
-
-        Remember to include this token in the `Authorization`` header of your calls. In addition, you'll also need to have the following information in your headers:
-        - Authorisation: A Base64 encoded client_id and client_secret provided to you by the Tiimely team as part of onboarding. The format is: `Basic {client_id}:{client_secret}`
-        - Content-Type: `application/x-www-form-urlencoded`
-
-        **Keep your credentials safe and secure. Don't share your credentials or publish them to publicly accessible locations such as your client-side code or GitHub.**
+        The host value will either be `auth.tictoc.ai` for production or `auth.stage.tictoc.ai` for testing.
+          
+        Remember to include this token in the `Authorization` header of your calls. In addition, you'll also need to have the following information in your headers:
+        - `Authorisation`: A Base64 encoded client_id and client_secret provided to you by the Tiimely team as part of onboarding. The format is: `Basic {client_id}:{client_secret}`
+        - `Content-Type`: `application/x-www-form-urlencoded`
+            
+            Keep your credentials safe and secure. Don't share your credentials or publish them to publicly accessible locations such as your client-side code or GitHub.
         
       operationId: getToken
       security:
