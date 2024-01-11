@@ -166,7 +166,7 @@ paths:
           | `ApplicationContacts` | Customers applying for your product — limited to two.|
           | `ExternalDataId`| Reference information for your existing data aggregator - see the table below.|
           | `ExternalApplicationReferenceNumber`| This is an application reference from your system to enable you to correlate the Xapii `ApplicationReferenceNumber` with your records. An `ApplicationReferenceNumber` will be returned from the `/application/create` endpoint.|
-          | `IsActualsOnly`| 	Defaults to `true` if omitted. If this parameter is `true`, then a financial assessment is made available after accounts are linked. If this is set to `false` then "declared fiancials" are to be added via the `application/manage` endpoint.|
+          | `IsActualsOnly`|   Defaults to `true` if omitted. If this parameter is `true`, then a financial assessment is made available after accounts are linked. If this is set to `false` then "declared fiancials" are to be added via the `application/manage` endpoint.|
           | `Lender`| We will assign you a Lender code during onboarding. While this parameter is optional, if we have configured your credit policy to a set of business rules, it is best practice to include the Lender code. |
           
           
@@ -178,7 +178,6 @@ paths:
           | illion ODS BrokerFlow | `ODS` | A list of your BrokerFlow `DocumentIds`| You can provide multiple `DocumentIds` for each applicant. |
           | illion ODS MultiBank | `MB` | None | A unique URL will be returned when you call the endpoint, which your customers can use to link their accounts. Their data will automatically synch with your Xapii by Tiimely application. |
           | Yodlee v1.1 | `YOD11` | A list of your Yodlee customer identifiers. | You should have a one to one linking of applicant to Yodlee customer identifier. |
-          | Basiq (coming soon!) | `BSQ` | A list of your Basiq customer identifiers. | You should have a one to one linking of applicant to Basiq customer identifier. |
           | Connect your own data | `EXT` | None | By selecting `EXT` you will be required to upload your data to the application. Please see [`/financialvalidation/provideaccounts`](#/financialvalidation/provideaccounts) for more information. |  
 
 
@@ -266,7 +265,7 @@ paths:
           | Assessment Level | Financial Types |
           |-----|-----|
           | `Application` | This accounts for application-level financials such as cash deposits by adding AssetsCash into the `DeclaredFinancialsApplication` object. |
-          | `Household` | 	Households hold applicant details and are used to collect and assess your customer's monthly living expenses. Use the `DeclaredFinancialsHousehold` to add their non-discretionary spending.  |
+          | `Household` |   Households hold applicant details and are used to collect and assess your customer's monthly living expenses. Use the `DeclaredFinancialsHousehold` to add their non-discretionary spending.  |
           | `Applicant` | Within `ApplicationContacts`, you can add or edit personal details and include applicant-specific financials such as Income, Credit Cards, and Liabilities. |
          
           Xapii will compare these declared figures to the detected actuals in an applicant's linked accounts to ensure they meet your credit policy. 
@@ -1173,12 +1172,11 @@ paths:
       - Document
       summary: Get a link to upload a document to an application.
       description:  >-
-        This endpoint returns a pre-signed URL to upload the document. You can upload the documents using this URL via the [`/{UploadDocumentUrl}`](#/{UploadDocumentUrl}) endpoint. 
+        This endpoint returns a pre-signed URL to upload the document. Upload the documents using this URL via the /{UploadDocumentUrl} endpoint.
+
+        The request must include the `ApplicationReferenceNumber`, `DocumentName` and an enumeration for `FileType` and `DocumentType`.
         
-        Your request must the `ApplicationReferenceNumber` and `DocumentName`. You must also include an enumeration for:
-          - `FileType`
-          - `DocumentType`
-         
+        
         The `FileType` is the MIME type of the document with enumerations:
         
           |`FileType` | Description|
@@ -1219,6 +1217,12 @@ paths:
           | `BRD` | Borrower Repayment Declaration |
           | `COS` | Contract of Sale |
           | `OTHER` | Other document |
+
+        ## Assigning Ownership of Documents
+
+        To indicate which applicant a document belongs to, include their ContactId in the request. If the document belongs to both applicants, include both ContactId's.
+
+        Document ownership can be changed using the UI for most documents — excluding documents which have been processed by OCR such as bank statements.
       operationId: uploadDocument
       parameters:
         - in: header
@@ -1298,9 +1302,22 @@ paths:
       - Document
       summary: Get a list of documents linked to an application.
       description:  >-
-        This endpoint allows you to retrieve a list of documents including their identifier. The identifier can then be used to download the document via the [`/document/download`](#/document/download).
+        Get a list of documents filtered by document name or type and sort by various attributes in “Ascending” or “Descending” order. Once you have the document identifier, use [`/document/download`](#/document/download) to download that document.
+        
+        
+        Supported sort fields:
+        
+          | Fields (as strings) | Description |
+          |-----|-----|
+          | `"Applicants"` | The applicants' first name. |
+          | `"Date Uploaded"` | The date the document was uploaded. |
+          | `"Document Type"` | The type of the document – see list below. |
+          | `"File Type"` | The type of file. |
+          | `"Name"` | The name of the document. |
+          | `"Size"` | The size of the document. |
+          | `"Uploaded By"` | The username of the person who uploaded the document. |
           
-        The `DocumentType` is defined as per the table below: 
+        Supported Document types 
         
           | `DocumentType` | Description |
           |-----|-----|
@@ -1328,17 +1345,27 @@ paths:
           | `COS` | Contract of Sale |
           | `OTHER` | Other document |
 
-        If you have OCR enabled on your account, the `OcrStatus` will show tell you how the status of OCR processing: 
+        OCR Status:
+        
+        
+        If you have OCR-powered Document Digitisation enabled on your account, the `OcrStatus` will describe the state of the digitisation processing. *Document digitisation is in closed beta, with a public release expected in 2024*. 
         
           | `OcrStatus` | Description |
           |-----|-----|
-          | `CHECKING` | The document is being checked if it is supported for OCR processing |
-          | `READY` | The document is ready to be processed |
-          | `PROCESSING` | The document is processing |
-          | `SUCCESS` | The document has successfully completed processing |
-          | `FAILED` | The document has failed processing | 
-          | `DEAD` | The document is dead and cannot be processed |
-          | `UNSUPPORTED` | The document is not supported for OCR processing |
+          | `CHECKING` | Determining if the document can be digitised. |
+          | `READY` | Preparing to digitise the document. |
+          | `PROCESSING` | Digitising the document. |
+          | `SUCCESS` | Successfully digitised the document. |
+          | `FAILED` | Digitisation failed, re-attempting. | 
+          | `FAILED_ERROR` | Unable to digitise the document, usually due to poor document quality. | 
+          | `FAILED_VALIDATION_RUNNING_BALANCE` | Unable to digitise the document due to an inconsistent running balance. | 
+          | `FAILED_VALIDATION_TRANSACTION_BALANCE` | Unable to digitise the document due to unexpected characters where a transaction should be. | 
+          | `FAILED_VALIDATION_TRANSACTION_DATE` | Unable to digitise the document due to a transaction having the incorrect date format. |
+          | `FAILED_VALIDATION_TRANSACTION_AMOUNT` | Unable to digitise the document due to an unexpected transaction amount. | 
+          | `DEAD` | Digitisation failed numerous times and will not be re-attempted. |
+          | `UNSUPPORTED` | We have yet to support digitisation on this type of document. |
+          | `UNIDENTIFIED` | We could not identify this document and could not digitise it. |
+          | `BLOCKED` | The system has blocked digitisation on this document to protect the integrity of the application. Blocking occurs after at least one digitisation step. |
       operationId: getDocumentList
       parameters:
         - in: header
@@ -4572,6 +4599,10 @@ components:
         - DocumentType
       type: object
       properties:
+        ApplicationId:
+          type: string
+          description: Unique identifier for the application exclusive to our white-labelled mortgage solution, also known as an AUN.
+          example: "c080327e-79e1-43b0-b7ce-1a5fddee40d1"
         ApplicationReferenceNumber:
           type: string
           description: Unique identifier for the application.
@@ -4620,6 +4651,12 @@ components:
           - BRD
           - COS
           - OTHER
+        ContactIds:
+          type: array
+          items:
+            type: integer
+          example: [1, 2]
+          description: A list of applicant unique identifiers used to indicate document ownership. If you include two contact ids, the document will belong to both applicants.
     ResponseUploadDocument:
       type: object
       properties:
@@ -4657,13 +4694,17 @@ components:
         - ApplicationReferenceNumber
       type: object
       properties:
+        ApplicationId:
+          type: string
+          description: Unique identifier for the application exclusive to our white-labelled mortgage solution, also known as an AUN.
+          example: "c080327e-79e1-43b0-b7ce-1a5fddee40d1"
         ApplicationReferenceNumber:
           type: string
           description: Unique identifier for the application.
           example: "ABC123456"
         SearchCriteria:
           type: object
-          description: The search criteria.
+          description: Filter documents by specific criteria..
           properties:
             TextFilter:
               type: string
@@ -4673,25 +4714,42 @@ components:
               description: Contact Ids of the document.
               items:
                 type: integer
+            IsExclusive:
+              type: boolean
+              description: Specifies the type of filtering that will be applied to the document's list. If true, returns the documents that have all the provided ContactIds. If false, returns the documents that have any of the ContactIds.
+              example: false
+
         SortCriteria:
           type: object
-          description: The sort criteria.
+          description: Sort documents by specific criteria.
           properties:
             SortField:
               type: string
-              description: The sort field.
+              description: Text field to indicate which attribute to sort by , i.e. “Date Uploaded”.
+              enum:
+              - "Date Uploaded"
+              - "Name"
+              - "Uploaded By"
+              - "Applicants"
+              - "Document Type"
+              - "Size"
+              - "File Type"
             SortDirection:
               type: string
-              description: The sort direction.
+              description: Text field to indicate direction of sorted list using “Ascending” or “Descending”.
+              enum:
+              - "Ascending"
+              - "Descending"
         Pagination:
           type: object
+          description: Define approach to pagination
           properties:
             PageSize:
               type: number
-              description: The number of items per page.
+              description: The number of items per page, i.e., “50”.
             PageNumber:
               type: number
-              description: The current page number.
+              description: The current page number, i.e., “2”.
     ResponseGetListDocument:
       type: object
       properties:
@@ -4699,8 +4757,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DocumentSchema'
+          description: A list of documents.
         Pagination:
           type: object
+          description: The pagination approach.
           properties:
             PageSize:
               type: number
@@ -4789,7 +4849,13 @@ components:
           - image/png
         ApplicationId:
           type: integer
-          description: The unique identifier of the application.
+          description: Unique identifier for the application.
+        CustomerIds:
+          type: array
+          items: 
+            type: string
+            example: ["ff80bff8-3bb2-4899-84cd-857499568f50", "851506c3-b321-4d27-8265-7d61d6429140"]
+          description: A list of unique customer ids. These are not the same as contact IDs.
         DocumentStoreKey:
           type: string
           description: The document key with the path where document is stored in Document Management Store.
@@ -4803,19 +4869,26 @@ components:
           description: The date that document was uploaded.
         UploadedBy:
           type: string
-          description: The user who uploaded the document.
+          description: The username of the person who uploaded the document.
         OcrStatus:
           type: string
           example: UNSUPPORTED
-          description: OCR processing status of the document.
+          description: The processing status of a digitised document.
           enum:
           - CHECKING
           - READY
           - PROCESSING
           - SUCCESS
           - FAILED
+          - FAILED_ERROR
+          - FAILED_VALIDATION_RUNNING_BALANCE
+          - FAILED_VALIDATION_TRANSACTION_BALANCE
+          - FAILED_VALIDATION_TRANSACTION_DATE
+          - FAILED_VALIDATION_TRANSACTION_AMOUNT
           - DEAD
           - UNSUPPORTED
+          - UNIDENTIFIED
+          - BLOCKED
         Id:
           type: integer
           description: The unique identifier of the document.
@@ -4825,7 +4898,7 @@ components:
           description: The date that document was created.
         CreatedBy:
           type: string
-          description: The user who created the document.
+          description: The username of the person who created the document.
         LastUpdatedOn:
           type: string
           format: date-time
@@ -5204,7 +5277,7 @@ components:
                 - FAILED
               Status:
                 type: string
-                example: "Delete request sucessfully completed processing."
+                example: "Delete request successfully completed processing."
                 description: A description of the application delete status.
               StatusOn: 
                 type: string
