@@ -1188,6 +1188,9 @@ paths:
           |`application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` | Microsoft Excel (xlsx) document |
           |`image/jpeg` | JPEG image |
           |`image/png` | PNG image |
+          |`email/msg` | Email (msg) |
+          |`message/rfc822` | Email (eml) |
+          |`text/html` | HTML |
           
           
         The `DocumentType` is used to index and specify the type of document being uploaded:
@@ -4623,6 +4626,9 @@ components:
           - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
           - image/jpeg
           - image/png
+          - email/msg
+          - message/rfc822
+          - text/html
         DocumentType:
           type: string
           example: COS
@@ -4657,6 +4663,12 @@ components:
             type: integer
           example: [1, 2]
           description: A list of applicant unique identifiers used to indicate document ownership. If you include two contact ids, the document will belong to both applicants.
+        CustomerIds:
+          type: array
+          items:
+            type: string
+          example: ["5251b6d1-68dc-47d8-9f5e-cc4f2f23cfef", "ad642c5b-24d9-4a46-91bc-01b4a6d0abbd"]
+          description: A list of applicant unique identifiers used to indicate document ownership. If you include two customer ids, the document will belong to both applicants.
     ResponseUploadDocument:
       type: object
       properties:
@@ -4847,6 +4859,9 @@ components:
           - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
           - image/jpeg
           - image/png
+          - email/msg
+          - message/rfc822
+          - text/html
         ApplicationId:
           type: integer
           description: Unique identifier for the application.
@@ -4855,7 +4870,7 @@ components:
           items: 
             type: string
             example: ["ff80bff8-3bb2-4899-84cd-857499568f50", "851506c3-b321-4d27-8265-7d61d6429140"]
-          description: A list of unique customer ids. These are not the same as contact IDs.
+          description: A list of unique customer ids. These are not the same as contact ids.
         DocumentStoreKey:
           type: string
           description: The document key with the path where document is stored in Document Management Store.
