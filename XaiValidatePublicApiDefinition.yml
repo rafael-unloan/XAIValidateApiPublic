@@ -3410,8 +3410,12 @@ components:
             - REF
           LoanTerm:
             type: integer
-            description: The number of years for the loan
+            description: The number of years for the loan (Either LoanTerm or LoanTermMonths can be used)
             example: 30
+          LoanTermMonths:
+            type: integer
+            description: The number of months for the loan (Either LoanTerm or LoanTermMonths can be used)
+            example: 360
           RateTerm:
             type: integer
             description: The number of years the initial interest rate applies.
@@ -3846,7 +3850,6 @@ components:
       - BorrowingAmount
       - MonthlyRepayment
       - RepaymentType
-      - LoanTerm
       - RateTerm
       - PropertyUsage
       - InterestRate
@@ -3875,9 +3878,13 @@ components:
             - PI
             - IO
         LoanTerm:
+            type: integer
+            description: The number of years for the loan (Either LoanTerm or LoanTermMonths can be used)
+            example: 30
+        LoanTermMonths:
           type: integer
-          description: The number of years for the loan
-          example: 30
+          description: The number of months for the loan (Either LoanTerm or LoanTermMonths can be used)
+          example: 360
         RateTerm:
           type: integer
           description: The number of years the initial interest rate applies.
