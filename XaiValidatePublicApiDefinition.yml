@@ -3167,6 +3167,7 @@ components:
                 - MaxBorrowingAmount
                 - HecsTotalMonthlyRepayment
                 - ApplicantServiceability
+                - AnyHouseholdsHemUsed
                 properties:
                   TotalGrossIncome:
                     type: number
@@ -3226,12 +3227,12 @@ components:
                   AllHouseholdsHemExpenses:
                     type: number
                     format: double
-                    description: Represents the sum of all households HEM expenses at application level.
+                    description: The sum of all household's HEM expenses at the application level.
                     example: 2234.56
                   AllHouseholdsMonthlyExpenses:
                     type: number
                     format: double
-                    description: Represents the sum of all monthly household expenses at application level.
+                    description: The sum of monthly household expenses comparable to HEM at the application level.
                     example: 5234.56
                   AllHouseholdsMonthlyRentBoard:
                     type: number
@@ -3277,9 +3278,51 @@ components:
                     description: The total HECS monthly repayment at the application level.
                     type: number
                     format: double
-                    example: 350.75                     
+                    example: 350.75
+                  AnyHouseholdsHemUsed:
+                    type: boolean
+                    description: Indicates if the living expense calculation utilises the HEM benchmark on any household.
                   ApplicantServiceability:
-                    $ref: '#/components/schemas/ResponseApplicantServiceability'      
+                    $ref: '#/components/schemas/ResponseApplicantServiceability'
+                  Households:
+                    type: array
+                    description: An array containing households.
+                    items:
+                      type: object
+                      required:
+                      - HouseholdId
+                      - HouseholdAddress
+                      - HouseholdHemBenchmark
+                      - HouseholdMonthlyExpenses
+                      - HouseholdAllExpenses
+                      - IsHemUsed
+                      properties:
+                        HouseholdId:
+                          description: Unique identifier for the household.
+                          type: string
+                          example: "077d16b2-5200-4323-ac97-e41358755c38"
+                        HouseholdAddress:
+                          description: The address of the household.
+                          type: string
+                          example: "21 Jump Street, Narre Warren, VIC 3999"
+                        HouseholdHemBenchmark:
+                          description: The HEM benchmark value for the household.
+                          type: number
+                          format: double
+                          example: 110555.66
+                        HouseholdMonthlyExpenses:
+                          description: The sum of monthly expenses comparable to HEM for the household.
+                          type: number
+                          format: double
+                          example: 100000.66
+                        HouseholdAllExpenses:
+                          description: All household expenses at the household level, including those compared to HEM and the additional expenditures added afterwards.
+                          type: number
+                          format: double
+                          example: 110000.66
+                        IsHemUsed:
+                          description: Indicates if the living expense calculation utilises the HEM benchmark.
+                          type: boolean
     ResponseApplicantServiceability:
       type: array
       description: A list of applicant-level serviceability results.
@@ -3287,6 +3330,8 @@ components:
         type: object
         required:
         - EmailAddress
+        - HouseholdId
+        - HouseholdAddress
         - TaxableGrossIncome
         - GrossIncome
         - AttributableGrossIncome
@@ -3304,6 +3349,14 @@ components:
             description: The email address indicating the applicant-level serviceability results.
             type: string
             format: email
+          HouseholdId:
+            description: Unique identifier for the household.
+            type: string
+            example: "077d16b2-5200-4323-ac97-e41358755c38"
+          HouseholdAddress:
+            description: The address of the household.
+            type: string
+            example: "21 Jump Street, Narre Warren, VIC 3999"
           TaxableGrossIncome:
             description: Represents the applicant specific taxable gross annual income.
             type: number
