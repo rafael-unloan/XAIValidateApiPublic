@@ -691,7 +691,7 @@ paths:
         position.
       description: >-
       
-        This endpoint includes the automated assessment of financial position results. It reflects the automated assessment, and any of your users' interaction with the data in the XAI Validare UI. Using this endpoint you'll be able to retrieve a comprehensive assessment of your applicants' income, expenses, assets, liabilities and any behavioural flags such as high risk transactions or arrears events.
+        This endpoint includes the automated assessment of financial position results. It reflects the automated assessment, and any of your users' interaction with the data in the Xapii UI. Using this endpoint you'll be able to retrieve a comprehensive assessment of your applicants' income, expenses, assets, liabilities and any behavioural flags such as high risk transactions or arrears events.
           
         The table below summarises the key objects returned:
           
@@ -1179,7 +1179,7 @@ paths:
         
         The `FileType` is the MIME type of the document with enumerations:
         
-          |`FileType` | Description|
+          |`File Type` | Description|
           |-----|-----|
           |`application/msword` | Microsoft Word document |
           |`application/vnd.openxmlformats-officedocument.wordprocessingml.document` | Microsoft Word (docx) document |
@@ -1195,7 +1195,7 @@ paths:
           
         The `DocumentType` is used to index and specify the type of document being uploaded:
         
-          | `DocumentType` | Description |
+          | `Document Type` | Description |
           |-----|-----|
           | `BS` | Bank Statement |
           | `CC` | Credit Card Statement|
@@ -1303,12 +1303,17 @@ paths:
     post:
       tags:
       - Document
-      summary: Get a list of documents linked to an application.
+      summary: Get a list of documents
       description:  >-
-        Get a list of documents filtered by document name or type and sort by various attributes in “Ascending” or “Descending” order. Once you have the document identifier, use [`/document/download`](#/document/download) to download that document.
+        Retrieve a list of documents filtered by document name or type and sort by various attributes in “Ascending” or “Descending” order. Once you have the document identifier, use [`/document/download`](#/document/download) to download that document.
+
+        ### Retrieving documents for specific applicants
+
+        A few ways exist to receive a subset of the documents on an application. First, there is a raw `TextFilter`, which returns matching document names or document types. To get a list of documents based on document ownership, use `SearchCriteria` along with the applicant's `ContactIds`.
         
-        
-        Supported sort fields:
+        A document can be related to a single applicant or both applicants. Use `IsExclusive` to denote whether to return documents that match **all** `ContactIds` (`true`) or **any** `ContactIds` (`false`). By default, we will respond with documents related to any applicant. 
+
+        ### Supported sort fields:
         
           | Fields (as strings) | Description |
           |-----|-----|
@@ -1320,9 +1325,9 @@ paths:
           | `"Size"` | The size of the document. |
           | `"Uploaded By"` | The username of the person who uploaded the document. |
           
-        Supported Document types 
+        ### Supported Document types:
         
-          | `DocumentType` | Description |
+          | `Document Type` | Description |
           |-----|-----|
           | `BS` | Bank Statement |
           | `CC` | Credit Card Statement|
@@ -1348,27 +1353,51 @@ paths:
           | `COS` | Contract of Sale |
           | `OTHER` | Other document |
 
-        OCR Status:
+        ### Digitised Documents
         
+        Xapii offers two approaches to Document Digitisation: Statement OCR and Auto-redaction of tax file numbers. To get access to this feature, please get in touch with your Tiimely account manager.
+
+        ### Statement OCR Responses
         
-        If you have OCR-powered Document Digitisation enabled on your account, the `OcrStatus` will describe the state of the digitisation processing. *Document digitisation is in closed beta, with a public release expected in 2024*. 
-        
-          | `OcrStatus` | Description |
+        Digitise Bank Statements using Optical Character Recognition for use in automated decisioning. *Statement OCR is in closed beta, with a public release expected mid 2024*.
+                
+          | `Ocr Status` | Description |
           |-----|-----|
           | `CHECKING` | Determining if the document can be digitised. |
-          | `READY` | Preparing to digitise the document. |
-          | `PROCESSING` | Digitising the document. |
-          | `SUCCESS` | Successfully digitised the document. |
-          | `FAILED` | Digitisation failed, re-attempting. | 
-          | `FAILED_ERROR` | Unable to digitise the document, usually due to poor document quality. | 
+          | `READY` | Preparing to process the document. |
+          | `PROCESSING` | Processing the document. |
+          | `SUCCESS` | Successfully processed the document. |
+          | `FAILED` | Processing failed, re-attempting. | 
+          | `FAILED_ERROR` | The document cannot be processed, usually due to poor quality. | 
           | `FAILED_VALIDATION_RUNNING_BALANCE` | Unable to digitise the document due to an inconsistent running balance. | 
           | `FAILED_VALIDATION_TRANSACTION_BALANCE` | Unable to digitise the document due to unexpected characters where a transaction should be. | 
           | `FAILED_VALIDATION_TRANSACTION_DATE` | Unable to digitise the document due to a transaction having the incorrect date format. |
           | `FAILED_VALIDATION_TRANSACTION_AMOUNT` | Unable to digitise the document due to an unexpected transaction amount. | 
-          | `DEAD` | Digitisation failed numerous times and will not be re-attempted. |
-          | `UNSUPPORTED` | We have yet to support digitisation on this type of document. |
-          | `UNIDENTIFIED` | We could not identify this document and could not digitise it. |
-          | `BLOCKED` | The system has blocked digitisation on this document to protect the integrity of the application. Blocking occurs after at least one digitisation step. |
+          | `DEAD` | Processing failed numerous times and will not be re-attempted. |
+          | `UNSUPPORTED` | We have yet to support this type of document or an issue has been reported via the user interface. |
+          | `UNIDENTIFIED` | We could not identify this document and could not process it. |
+          | `BLOCKED` | The system has blocked digitisation on this document to protect the integrity of the application. |
+        
+        ### Auto-redaction Responses
+        
+        Automatically redact tax file numbers from Tax Returns and Notices of Assessment using Optical Character Recognition. *Auto-redaction is in closed beta, with a public release expected mid 2024*.
+                
+          | `Ocr Status` | Description |
+          |-----|-----|
+          | `CHECKING` | Determining if the document can be redacted. |
+          | `READY` | Preparing to processs the document. |
+          | `PROCESSING` | Processing the document. |
+          | `SUCCESS` | Successfully processed the document. |
+          | `FAILED_VALIDATION` | Processing failed, re-attempting. |
+          | `REDACTION_FAILURE_MISS` | This file had more than five pages, so we recommend double-checking the document. |
+          | `REDACTION_SUCCESS_MOREFOUND` | Based on page count, this document had more Tax File Numbers than we expected. We recommend double-checking the document. |
+          | `REDACTION_FAILED_RUNTIME` | We couldn't find any Tax File Numbers. We recommend double-checking the document. |
+          | `REDACTION_SUCCESS_PARTIAL` | We attempted to redact the document, but something went wrong during processing. |
+          | `REDACTION_SUCCESS_NONSTANDARD` | This file was a mix of tax returns and income statements. We recommend double-checking the document. |
+          | `REDACTION_SUCCESS_UNUSUAL` | There were fewer Tax File Numbers than we expected. We recommend double-checking the document. |
+          | `MANUALLY_REDACTED` | This document has manual redactions made by the user. |
+          | `DEAD` | Processing failed numerous times and will not be re-attempted. |
+          | `UNSUPPORTED` | We have yet to support this type of document or an issue has been reported via the user interface. |
       operationId: getDocumentList
       parameters:
         - in: header
@@ -1407,13 +1436,13 @@ paths:
     post:
       tags:
       - Document
-      summary: Get information about a document linked to an application.
+      summary: Get a single document
       description:  >-
-        This endpoint allows you to retrieve a document information by its identifier. This identifier can be retrieved from the [`/document/getlist`](#/document/getlist) endpoint.
+        Retrieve a document by its `DocumentId` and `ApplicationReferenceNumber`. The document identifier can be retrieved from the [`/document/getlist`](#/document/getlist) endpoint. Once you have the document identifier, use [`/document/download`](#/document/download) to download that document.
           
-        The `DocumentType` in the response is defined as per the table below:
+        Supported document types:
 
-          | `DocumentType` | Description |
+          | `Document Type` | Description |
           |-----|-----|
           | `BS` | Bank Statement |
           | `CC` | Credit Card Statement|
@@ -1438,6 +1467,52 @@ paths:
           | `BRD` | Borrower Repayment Declaration |
           | `COS` | Contract of Sale |
           | `OTHER` | Other document |
+
+        ### Digitised Documents
+        
+        Xapii offers two approaches to Document Digitisation: Statement OCR and Auto-redaction of tax file numbers. To get access to this feature, please get in touch with your Tiimely account manager.
+
+        ### Statement OCR Responses
+        
+        Digitise Bank Statements using Optical Character Recognition for use in automated decisioning. *Statement OCR is in closed beta, with a public release expected mid 2024*.
+                
+          | `Ocr Status` | Description |
+          |-----|-----|
+          | `CHECKING` | Determining if the document can be digitised. |
+          | `READY` | Preparing to process the document. |
+          | `PROCESSING` | Processing the document. |
+          | `SUCCESS` | Successfully processed the document. |
+          | `FAILED` | Processing failed, re-attempting. | 
+          | `FAILED_ERROR` | The document cannot be processed, usually due to poor quality. | 
+          | `FAILED_VALIDATION_RUNNING_BALANCE` | Unable to digitise the document due to an inconsistent running balance. | 
+          | `FAILED_VALIDATION_TRANSACTION_BALANCE` | Unable to digitise the document due to unexpected characters where a transaction should be. | 
+          | `FAILED_VALIDATION_TRANSACTION_DATE` | Unable to digitise the document due to a transaction having the incorrect date format. |
+          | `FAILED_VALIDATION_TRANSACTION_AMOUNT` | Unable to digitise the document due to an unexpected transaction amount. | 
+          | `DEAD` | Processing failed numerous times and will not be re-attempted. |
+          | `UNSUPPORTED` | We have yet to support this type of document or an issue has been reported via the user interface. |
+          | `UNIDENTIFIED` | We could not identify this document and could not process it. |
+          | `BLOCKED` | The system has blocked digitisation on this document to protect the integrity of the application. |
+        
+        ### Auto-redaction Responses
+        
+        Automatically redact tax file numbers from Tax Returns and Notices of Assessment using Optical Character Recognition. *Auto-redaction is in closed beta, with a public release expected mid 2024*.
+                
+          | `Ocr Status` | Description |
+          |-----|-----|
+          | `CHECKING` | Determining if the document can be redacted. |
+          | `READY` | Preparing to processs the document. |
+          | `PROCESSING` | Processing the document. |
+          | `SUCCESS` | Successfully processed the document. |
+          | `FAILED_VALIDATION` | Processing failed, re-attempting. |
+          | `REDACTION_FAILURE_MISS` | This file had more than five pages, so we recommend double-checking the document. |
+          | `REDACTION_SUCCESS_MOREFOUND` | Based on page count, this document had more Tax File Numbers than we expected. We recommend double-checking the document. |
+          | `REDACTION_FAILED_RUNTIME` | We couldn't find any Tax File Numbers. We recommend double-checking the document. |
+          | `REDACTION_SUCCESS_PARTIAL` | We attempted to redact the document, but something went wrong during processing. |
+          | `REDACTION_SUCCESS_NONSTANDARD` | This file was a mix of tax returns and income statements. We recommend double-checking the document. |
+          | `REDACTION_SUCCESS_UNUSUAL` | There were fewer Tax File Numbers than we expected. We recommend double-checking the document. |
+          | `MANUALLY_REDACTED` | This document has manual redactions made by the user. |
+          | `DEAD` | Processing failed numerous times and will not be re-attempted. |
+          | `UNSUPPORTED` | We have yet to support this type of document or an issue has been reported via the user interface. |
       operationId: getDocument
       parameters:
         - in: header
@@ -3167,6 +3242,7 @@ components:
                 - MaxBorrowingAmount
                 - HecsTotalMonthlyRepayment
                 - ApplicantServiceability
+                - AnyHouseholdsHemUsed
                 properties:
                   TotalGrossIncome:
                     type: number
@@ -3209,10 +3285,15 @@ components:
                     format: double
                     example: 500.1112 
                   TotalExistingMonthlyBufferedRepayment:
-                    description: The sum of all debt repayments for facilities currently owned by all applicants.
+                    description: The sum of all buffered debt repayments for facilities currently owned by all applicants.
                     type: number
                     format: double
                     example: 3090.1134
+		  TotalExistingMonthlyUnbufferedRepayment:
+                    description: The sum of all unbuffered debt repayments for facilities currently owned by all applicants.
+                    type: number
+                    format: double
+                    example: 4000.1134
                   TotalNewMonthlyBufferedRepayment:
                     description: The sum of all debt repayments for the new facility.
                     type: number
@@ -3226,12 +3307,12 @@ components:
                   AllHouseholdsHemExpenses:
                     type: number
                     format: double
-                    description: Represents the sum of all households HEM expenses at application level.
+                    description: The sum of all household's HEM expenses at the application level.
                     example: 2234.56
                   AllHouseholdsMonthlyExpenses:
                     type: number
                     format: double
-                    description: Represents the sum of all monthly household expenses at application level.
+                    description: The sum of monthly household expenses comparable to HEM at the application level.
                     example: 5234.56
                   AllHouseholdsMonthlyRentBoard:
                     type: number
@@ -3277,9 +3358,51 @@ components:
                     description: The total HECS monthly repayment at the application level.
                     type: number
                     format: double
-                    example: 350.75                     
+                    example: 350.75
+                  AnyHouseholdsHemUsed:
+                    type: boolean
+                    description: Indicates if the living expense calculation utilises the HEM benchmark on any household.
                   ApplicantServiceability:
-                    $ref: '#/components/schemas/ResponseApplicantServiceability'      
+                    $ref: '#/components/schemas/ResponseApplicantServiceability'
+                  Households:
+                    type: array
+                    description: An array containing households.
+                    items:
+                      type: object
+                      required:
+                      - HouseholdId
+                      - HouseholdAddress
+                      - HouseholdHemBenchmark
+                      - HouseholdMonthlyExpenses
+                      - HouseholdAllExpenses
+                      - IsHemUsed
+                      properties:
+                        HouseholdId:
+                          description: Unique identifier for the household.
+                          type: string
+                          example: "077d16b2-5200-4323-ac97-e41358755c38"
+                        HouseholdAddress:
+                          description: The address of the household.
+                          type: string
+                          example: "21 Jump Street, Narre Warren, VIC 3999"
+                        HouseholdHemBenchmark:
+                          description: The HEM benchmark value for the household.
+                          type: number
+                          format: double
+                          example: 110555.66
+                        HouseholdMonthlyExpenses:
+                          description: The sum of monthly expenses comparable to HEM for the household.
+                          type: number
+                          format: double
+                          example: 100000.66
+                        HouseholdAllExpenses:
+                          description: All household expenses at the household level, including those compared to HEM and the additional expenditures added afterwards.
+                          type: number
+                          format: double
+                          example: 110000.66
+                        IsHemUsed:
+                          description: Indicates if the living expense calculation utilises the HEM benchmark.
+                          type: boolean
     ResponseApplicantServiceability:
       type: array
       description: A list of applicant-level serviceability results.
@@ -3287,6 +3410,8 @@ components:
         type: object
         required:
         - EmailAddress
+        - HouseholdId
+        - HouseholdAddress
         - TaxableGrossIncome
         - GrossIncome
         - AttributableGrossIncome
@@ -3304,6 +3429,14 @@ components:
             description: The email address indicating the applicant-level serviceability results.
             type: string
             format: email
+          HouseholdId:
+            description: Unique identifier for the household.
+            type: string
+            example: "077d16b2-5200-4323-ac97-e41358755c38"
+          HouseholdAddress:
+            description: The address of the household.
+            type: string
+            example: "21 Jump Street, Narre Warren, VIC 3999"
           TaxableGrossIncome:
             description: Represents the applicant specific taxable gross annual income.
             type: number
@@ -4697,6 +4830,7 @@ components:
       properties:
         ApplicationDocument:
           $ref: '#/components/schemas/DocumentSchema'
+          description: A list of documents.
         RequestId:
           type: string
           example: RojLCjD-ywPPMNg=
@@ -4706,31 +4840,30 @@ components:
         - ApplicationReferenceNumber
       type: object
       properties:
-        ApplicationId:
-          type: string
-          description: Unique identifier for the application exclusive to our white-labelled mortgage solution, also known as an AUN.
-          example: "c080327e-79e1-43b0-b7ce-1a5fddee40d1"
         ApplicationReferenceNumber:
           type: string
           description: Unique identifier for the application.
           example: "ABC123456"
+        ApplicationId:
+          type: string
+          description: Unique identifier for the application exclusive to our white-labelled mortgage solution, also known as an AUN.
+          example: "c080327e-79e1-43b0-b7ce-1a5fddee40d1"
         SearchCriteria:
           type: object
-          description: Filter documents by specific criteria..
+          description: Filter documents by specific criteria.
           properties:
             TextFilter:
               type: string
               description: Text filter for document name or type.
             ContactIds:
               type: array
-              description: Contact Ids of the document.
+              description: Contact ids related to the document.
               items:
                 type: integer
             IsExclusive:
               type: boolean
-              description: Specifies the type of filtering that will be applied to the document's list. If true, returns the documents that have all the provided ContactIds. If false, returns the documents that have any of the ContactIds.
+              description: Indicates whether to return documents that match **all** `ContactIds` (`true`) or **any** `ContactIds` (`false`) - defaults to `false`.
               example: false
-
         SortCriteria:
           type: object
           description: Sort documents by specific criteria.
@@ -4869,7 +5002,7 @@ components:
           type: array
           items: 
             type: string
-            example: ["ff80bff8-3bb2-4899-84cd-857499568f50", "851506c3-b321-4d27-8265-7d61d6429140"]
+          example: ["ff80bff8-3bb2-4899-84cd-857499568f50", "851506c3-b321-4d27-8265-7d61d6429140"]
           description: A list of unique customer ids. These are not the same as contact ids.
         DocumentStoreKey:
           type: string
@@ -4888,7 +5021,7 @@ components:
         OcrStatus:
           type: string
           example: UNSUPPORTED
-          description: The processing status of a digitised document.
+          description: The processing status of a digitised document, used by both Statement OCR and Auto-redaction.
           enum:
           - CHECKING
           - READY
@@ -4904,6 +5037,14 @@ components:
           - UNSUPPORTED
           - UNIDENTIFIED
           - BLOCKED
+          - FAILED_VALIDATION
+          - REDACTION_FAILURE_MISS
+          - REDACTION_SUCCESS_MOREFOUND
+          - REDACTION_FAILED_RUNTIME
+          - REDACTION_SUCCESS_PARTIAL
+          - REDACTION_SUCCESS_NONSTANDARD
+          - REDACTION_SUCCESS_UNUSUAL
+          - MANUALLY_REDACTED
         Id:
           type: integer
           description: The unique identifier of the document.
@@ -4918,7 +5059,7 @@ components:
           type: string
           format: date-time
           description: The date the document was last updated.
-        LastUpdateBy:
+        LastUpdatedBy:
           type: string
           description: The user who last updated the document.
         RowVersion:
