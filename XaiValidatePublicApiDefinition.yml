@@ -3289,7 +3289,7 @@ components:
                     type: number
                     format: double
                     example: 3090.1134
-		  TotalExistingMonthlyUnbufferedRepayment:
+                  TotalExistingMonthlyUnbufferedRepayment:
                     description: The sum of all unbuffered debt repayments for facilities currently owned by all applicants.
                     type: number
                     format: double
